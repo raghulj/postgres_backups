@@ -1,19 +1,19 @@
-FROM python:3.8-slim-bookworm
+FROM python:3.12.4-slim-bookworm
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        wget \
-        lbzip2 \
-        bzip2 \
-        gnupg2 \
-        curl \
-        cron \
+    wget \
+    lbzip2 \
+    bzip2 \
+    gnupg2 \
+    curl \
+    cron \
     && rm -rf /var/lib/apt/lists/*
 
 
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
     apt-get update -y && \
-    apt-get install -y postgresql-client-13
+    apt-get install -y postgresql-client-14
 
 RUN pip install boto3
 
