@@ -1,5 +1,7 @@
 FROM python:3.12.4-slim-bookworm
 
+LABEL pgversion=v14
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     lbzip2 \
