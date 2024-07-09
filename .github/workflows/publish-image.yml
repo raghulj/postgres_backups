@@ -12,16 +12,16 @@ jobs:
 
     runs-on: ubuntu-latest
 
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
     - name: Extract version from Dockerfile
-      id: extract_version
       run: |
-        VERSION=$(grep -oP '(?<=LABEL pgversion=")[^"]+' Dockerfile)
-        echo "VERSION=$VERSION" >> $GITHUB_ENV
-        
+        VERSION=$(grep "LABEL pgversion=" Dockerfile | cut -d'=' -f2)
+        echo "PG_VERSION=$VERSION" >> $GITHUB_ENV
+
     - name: Log in to GitHub Container Registry
       uses: docker/login-action@v2
       with:
@@ -37,5 +37,4 @@ jobs:
         tags: |
           ghcr.io/${{ github.repository }}:latest
           ghcr.io/${{ github.repository }}:${{ github.sha }}
-          ghcr.io/${{ github.repository }}:${{ env.VERSION }}
-
+          ghcr.io/${{ github.repository }}:${{ env.PG_VERSION }}
