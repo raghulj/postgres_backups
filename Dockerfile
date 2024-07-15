@@ -9,13 +9,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
     apt-get update && \
-    apt-get install -y --no-install-recommends postgresql-client-14 && \
+    apt-get install -y --no-install-recommends postgresql-client-16 && \
     rm -rf /var/lib/apt/lists/*
 
 # Final stage
 FROM python:3.12.4-slim-bookworm
 
-LABEL pgversion=v14
+LABEL pgversion=v16
 
 COPY --from=builder /usr/bin/pg_dump /usr/bin/
 COPY --from=builder /usr/lib/postgresql /usr/lib/postgresql
