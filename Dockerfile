@@ -1,32 +1,24 @@
 # Builder stage
-FROM python:3.12.4-slim-bookworm AS builder
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    wget \
-    gnupg2 \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
-    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends postgresql-client-16 postgresql-common && \
-    rm -rf /var/lib/apt/lists/*
-
-# Final stage
 FROM python:3.12.4-slim-bookworm
 
 LABEL pgversion=v16
 
-COPY --from=builder /usr/bin/pg_dump /usr/bin/
-COPY --from=builder /usr/lib/postgresql /usr/lib/postgresql
-
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    wget \
+    gnupg2 \
     lbzip2 \
     bzip2 \
     curl \
     cron \
     && rm -rf /var/lib/apt/lists/* && \
     pip install --no-cache-dir boto3
+
+
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends postgresql-client-16 postgresql-common && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /backup
 
