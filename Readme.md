@@ -4,6 +4,21 @@ This Docker container facilitates the automated backup of PostgreSQL databases t
 
 A nod to the open-source community: the inception of this project was inspired by another, whose name escapes me. My gratitude for the open-source ethos that made this possible.
 
+## Available Images
+
+Images are published for PostgreSQL client versions 14 through 18. Choose the tag that matches your PostgreSQL server version.
+
+| Tag | PostgreSQL Version |
+|---|---|
+| `ghcr.io/<owner>/postgres_backups:pg14` | 14 |
+| `ghcr.io/<owner>/postgres_backups:pg15` | 15 |
+| `ghcr.io/<owner>/postgres_backups:pg16` | 16 |
+| `ghcr.io/<owner>/postgres_backups:pg17` | 17 |
+| `ghcr.io/<owner>/postgres_backups:pg18` | 18 |
+| `ghcr.io/<owner>/postgres_backups:latest` | 18 (newest) |
+
+> **Note**: Use a client version that matches or exceeds your server version. An older client may not support newer server features.
+
 ## Key Features and Assumptions
 
 - **Database Compatibility**: Primarily designed for PostgreSQL database servers.

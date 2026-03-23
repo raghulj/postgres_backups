@@ -2,41 +2,41 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
 
+    strategy:
+      fail-fast: false
+      matrix:
+        pg_version: [14, 15, 16, 17, 18]
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Extract version from Dockerfile
-      run: |
-        VERSION=$(grep "LABEL pgversion=" Dockerfile | cut -d'=' -f2)
-        echo "PG_VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Log in to GitHub Container Registry
-      uses: docker/login-action@v2
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        push: true
-        tags: |
-          ghcr.io/${{ github.repository }}:latest
-          ghcr.io/${{ github.repository }}:${{ github.sha }}
-          ghcr.io/${{ github.repository }}:${{ env.PG_VERSION }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: ${{ github.event_name == 'push' }}
+          build-args: |
+            PG_VERSION=${{ matrix.pg_version }}
+          tags: |
+            ghcr.io/${{ github.repository }}:pg${{ matrix.pg_version }}
+            ghcr.io/${{ github.repository }}:pg${{ matrix.pg_version }}-${{ github.sha }}
+            ${{ matrix.pg_version == 18 && format('ghcr.io/{0}:latest', github.repository) || '' }}
