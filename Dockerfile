@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     cron \
     && rm -rf /var/lib/apt/lists/* && \
-    pip install --no-cache-dir boto3 python-dateutil
+    pip install --no-cache-dir boto3==1.42.73
 
 RUN echo "deb [signed-by=/usr/share/keyrings/pgdg.gpg] http://apt.postgresql.org/pub/repos/apt/ bookworm-pgdg main" \
       > /etc/apt/sources.list.d/pgdg.list && \
