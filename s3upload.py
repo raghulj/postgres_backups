@@ -43,14 +43,15 @@ if not os.path.isfile(filepath) or os.stat(filepath).st_size == 0:
     sys.exit(1)
 
 print(f"Uploading file {filename}")
+s3_key = f"{project_path}/{filename}"
 try:
-    response = client.put_object(
-        Bucket=bucket_name, Key=f"{project_path}/{filename}", Body=open(filepath, "rb"), ACL="private"
-    )
-    status_code = response.get("ResponseMetadata", {}).get("HTTPStatusCode", 0)
-    if status_code != 200:
-        print(f"UPLOAD FAILED: S3 returned HTTP {status_code}", file=sys.stderr)
-        sys.exit(1)
+    with open(filepath, "rb") as f:
+        client.upload_fileobj(
+            f,
+            bucket_name,
+            s3_key,
+            ExtraArgs={"ACL": "private"},
+        )
     print(f"Upload successful. Removing local file {filepath}")
     if os.path.isfile(filepath):
         os.remove(filepath)
